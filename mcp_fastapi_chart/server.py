@@ -29,6 +29,10 @@ class ChartRequest(BaseModel):
 # Create the MCP server instance with standard variable name 'app'
 app = Server("unhcr-plot")
 
+# HACK: The deployment platform expects a `run_async` method, but the `mcp`
+# library version provides `run`. This monkey-patch makes them compatible.
+app.run_async = app.run
+
 # FastAPI server configuration
 FASTAPI_BASE_URL = "https://unhcrpyplot.rvibek.com.np/"
 
