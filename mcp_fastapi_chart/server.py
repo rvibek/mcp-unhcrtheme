@@ -29,9 +29,15 @@ class ChartRequest(BaseModel):
 # Create the MCP server instance with standard variable name 'app'
 app = Server("unhcr-plot")
 
-# HACK: The deployment platform expects a `run_async` method, but the `mcp`
-# library version provides `run`. This monkey-patch makes them compatible.
-app.run_async = app.run
+# HACK: The deployment platform is calling `run` with an unexpected `transport`
+# keyword argument, which causes a crash. This wrapper intercepts the call,
+# removes the unexpected argument, and then calls the original `run` method.
+original_run = app.run
+async def run_wrapper(*args, **kwargs):
+    kwargs.pop("transport", None)
+    return await original_run(*args, **kwargs)
+app.run = run_wrapper
+
 
 # FastAPI server configuration
 FASTAPI_BASE_URL = "https://unhcrpyplot.rvibek.com.np/"
