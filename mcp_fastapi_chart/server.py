@@ -4,6 +4,7 @@ import logging
 from typing import Any, Dict
 
 import httpx
+import mcp as mcp_pkg
 import mcp.server.stdio
 import mcp.types as types
 from mcp.server import Server
@@ -198,7 +199,7 @@ async def _check_fastapi_status() -> list[types.TextContent]:
 
 async def main():
     """Main entry point for the server"""
-    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
+    async with mcp_pkg.server.stdio.stdio_server() as (read_stream, write_stream):
         await app.run(
             read_stream,
             write_stream,
