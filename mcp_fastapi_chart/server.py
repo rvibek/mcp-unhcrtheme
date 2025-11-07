@@ -1,7 +1,6 @@
 import asyncio
 import base64
 import logging
-import tempfile
 from typing import Any, Dict
 
 import httpx
@@ -36,7 +35,6 @@ FASTAPI_BASE_URL = "https://unhcrpyplot.rvibek.com.np/"
 @server.list_tools()
 async def handle_list_tools() -> list[types.Tool]:
     """List available tools"""
-    logger.info("Listing available tools")
     return [
         types.Tool(
             name="generate_chart",
@@ -97,14 +95,25 @@ async def handle_list_tools() -> list[types.Tool]:
     ]
 
 
+@server.call_tool()
+async def handle_call_tool(
+    name: str,
+    arguments: dict | None
+) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
+    """Handle tool calls"""
+    if name == "generate_chart":
+        return await _generate_chart(arguments)
+    elif name == "check_fastapi_status":
+        return await _check_fastapi_status()
+    else:
+        raise ValueError(f"Unknown tool: {name}")
+
+
 async def _generate_chart(arguments: dict) -> list[types.TextContent | types.ImageContent]:
     """Generate a chart using the FastAPI service"""
     try:
-        # Validate and prepare the request
         chart_request = ChartRequest(**arguments)
-        logger.info(f"Generating chart: {chart_request.title}")
         
-        # Send request to FastAPI server
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"{FASTAPI_BASE_URL}/plot",
@@ -113,10 +122,8 @@ async def _generate_chart(arguments: dict) -> list[types.TextContent | types.Ima
             )
             
             if response.status_code == 200:
-                # Encode the image data as base64 for ImageContent
                 image_data_base64 = base64.b64encode(response.content).decode('utf-8')
                 
-                # Return both text confirmation and the image
                 return [
                     types.TextContent(
                         type="text",
@@ -144,7 +151,6 @@ async def _generate_chart(arguments: dict) -> list[types.TextContent | types.Ima
             )
         ]
     except Exception as e:
-        logger.error(f"Error generating chart: {str(e)}")
         return [
             types.TextContent(
                 type="text",
@@ -182,7 +188,6 @@ async def _check_fastapi_status() -> list[types.TextContent]:
             )
         ]
     except Exception as e:
-        logger.error(f"Error checking FastAPI status: {str(e)}")
         return [
             types.TextContent(
                 type="text",
@@ -191,26 +196,9 @@ async def _check_fastapi_status() -> list[types.TextContent]:
         ]
 
 
-@server.call_tool()
-async def handle_call_tool(
-    name: str,
-    arguments: dict | None
-) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
-    """Handle tool calls"""
-    logger.info(f"Handling tool call: {name}")
-    if name == "generate_chart":
-        return await _generate_chart(arguments)
-    elif name == "check_fastapi_status":
-        return await _check_fastapi_status()
-    else:
-        raise ValueError(f"Unknown tool: {name}")
-
-
 async def main():
     """Main entry point for the server"""
-    logger.info("Starting FastAPI Chart MCP server")
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
-        logger.info("MCP stdio server started")
         await server.run(
             read_stream,
             write_stream,
@@ -226,5 +214,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    logger.info("Running server as main module")
     asyncio.run(main())

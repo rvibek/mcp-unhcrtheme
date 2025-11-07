@@ -2,7 +2,7 @@
   "name": "mcp-fastapi-chart",
   "version": "0.1.0",
   "description": "MCP server for interacting with FastAPI chart generation service",
-  "entrypoint": "mcp_fastapi_chart.server",
+  "entrypoint": "mcp_fastapi_chart.server:server",
   "env": {},
   "dependencies": []
 }
