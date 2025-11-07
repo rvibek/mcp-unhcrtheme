@@ -33,7 +33,7 @@ class FastAPIChartServer:
         self.server = Server("fastapi-chart")
         
         # FastAPI server configuration
-        self.fastapi_base_url = "http://localhost:8000"
+        self.fastapi_base_url = "https://unhcrpyplot.rvibek.com.np/"
         logger.info(f"FastAPI server URL configured: {self.fastapi_base_url}")
         
         @self.server.list_tools()
