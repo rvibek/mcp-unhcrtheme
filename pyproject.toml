@@ -13,16 +13,8 @@ dependencies = [
 requires-python = ">=3.9"
 
 [project.scripts]
-mcp-fastapi-chart = "main:main"
+mcp-fastapi-chart = "mcp_fastapi_chart.server:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.fastmcp]
-entrypoint = "main:mcp"
-
-[tool.hatch.build.targets.wheel]
-include = [
-  "main.py"
-]
