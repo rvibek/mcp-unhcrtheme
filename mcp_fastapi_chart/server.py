@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import logging
 import os
 import tempfile
 from typing import Any, Dict, Optional
@@ -10,6 +11,10 @@ import mcp.types as types
 from mcp.server import Server
 from mcp.server.models import InitializationOptions, ServerCapabilities
 from pydantic import BaseModel
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger("fastapi-chart-server")
 
 
 class ChartRequest(BaseModel):
@@ -24,10 +29,12 @@ class ChartRequest(BaseModel):
 
 class FastAPIChartServer:
     def __init__(self):
+        logger.info("Initializing FastAPIChartServer")
         self.server = Server("fastapi-chart")
         
         # FastAPI server configuration
         self.fastapi_base_url = "http://localhost:8000"
+        logger.info(f"FastAPI server URL configured: {self.fastapi_base_url}")
         
         @self.server.list_tools()
         async def handle_list_tools() -> list[types.Tool]:
@@ -197,10 +204,14 @@ class FastAPIChartServer:
             ]
 
 
+# Create a global server instance for FastMCP
+server = FastAPIChartServer()
+
 async def main():
+    logger.info("Starting FastAPI Chart MCP server")
     # Run the server
-    server = FastAPIChartServer()
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
+        logger.info("MCP stdio server started")
         await server.server.run(
             read_stream,
             write_stream,
@@ -218,4 +229,5 @@ async def main():
 
 
 if __name__ == "__main__":
+    logger.info("Running server as main module")
     asyncio.run(main())
