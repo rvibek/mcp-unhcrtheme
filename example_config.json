@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "fastapi-chart": {
+      "command": "python",
+      "args": ["-m", "mcp_fastapi_chart.server"]
+    }
+  }
+}

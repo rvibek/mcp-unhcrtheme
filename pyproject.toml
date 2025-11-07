@@ -1,0 +1,20 @@
+[project]
+name = "mcp-fastapi-chart"
+version = "0.1.0"
+description = "MCP server for interacting with FastAPI chart generation service"
+authors = [
+    {name = "Developer", email = "developer@example.com"},
+]
+dependencies = [
+    "mcp[cli]",
+    "httpx",
+    "pydantic",
+]
+requires-python = ">=3.9"
+
+[project.scripts]
+mcp-fastapi-chart = "mcp_fastapi_chart.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
