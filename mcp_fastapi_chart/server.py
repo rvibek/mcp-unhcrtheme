@@ -25,14 +25,14 @@ class ChartRequest(BaseModel):
     y_label: str
 
 
-# Create the MCP server instance
-server = Server("fastapi-chart")
+# Create the MCP server instance with standard variable name 'mcp'
+mcp = Server("fastapi-chart")
 
 # FastAPI server configuration
 FASTAPI_BASE_URL = "https://unhcrpyplot.rvibek.com.np/"
 
 
-@server.list_tools()
+@mcp.list_tools()
 async def handle_list_tools() -> list[types.Tool]:
     """List available tools"""
     return [
@@ -95,7 +95,7 @@ async def handle_list_tools() -> list[types.Tool]:
     ]
 
 
-@server.call_tool()
+@mcp.call_tool()
 async def handle_call_tool(
     name: str,
     arguments: dict | None
@@ -199,13 +199,13 @@ async def _check_fastapi_status() -> list[types.TextContent]:
 async def main():
     """Main entry point for the server"""
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
-        await server.run(
+        await mcp.run(
             read_stream,
             write_stream,
             InitializationOptions(
                 server_name="fastapi-chart",
                 server_version="0.1.0",
-                capabilities=server.get_capabilities(
+                capabilities=mcp.get_capabilities(
                     notification_options=None,
                     experimental_capabilities=None,
                 )
