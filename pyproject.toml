@@ -21,3 +21,8 @@ build-backend = "hatchling.build"
 
 [tool.fastmcp]
 entrypoint = "main:mcp"
+
+[tool.hatch.build.targets.wheel]
+include = [
+  "main.py"
+]
