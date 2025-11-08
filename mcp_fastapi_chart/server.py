@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger("fastapi-chart-server")
 
 # Create the FastMCP server instance
-mcp = FastMCP("unhcr-plot")
+app = FastMCP("unhcr-plot")
 
 class ChartRequest(BaseModel):
     """Request model for chart generation"""
@@ -26,7 +26,7 @@ class ChartRequest(BaseModel):
 # FastAPI server configuration
 FASTAPI_BASE_URL = "https://unhcrpyplot.rvibek.com.np/"
 
-@mcp.tool()
+@app.tool()
 def generate_chart(
     chart_type: str,
     title: str,
@@ -52,7 +52,7 @@ def generate_chart(
     except Exception as e:
         return f"Error generating chart: {str(e)}"
 
-@mcp.tool()
+@app.tool()
 def check_fastapi_status() -> str:
     """Check if the FastAPI server is running and accessible"""
     try:
@@ -99,4 +99,4 @@ async def _check_fastapi_status_async() -> str:
         return f"Error checking FastAPI status: {str(e)}"
 
 if __name__ == "__main__":
-    mcp.run()
+    app.run()
