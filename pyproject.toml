@@ -6,14 +6,12 @@ authors = [
     {name = "Developer", email = "developer@example.com"},
 ]
 dependencies = [
-    "mcp[cli]==1.20.0",
+    "fastmcp",
     "httpx",
     "pydantic",
+    "python-dotenv"
 ]
 requires-python = ">=3.9"
-
-[project.scripts]
-mcp-fastapi-chart = "mcp_fastapi_chart.server:main"
 
 [build-system]
 requires = ["hatchling"]
